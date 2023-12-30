@@ -22,7 +22,7 @@ func (m *MockProcess) Run() {
 	m.isRunning = true
 
 	fmt.Print("Process running..")
-	for {
+	for m.isRunning {
 		fmt.Print(".")
 		time.Sleep(1 * time.Second)
 	}
@@ -36,6 +36,8 @@ func (m *MockProcess) Stop() {
 	}
 
 	fmt.Print("\nStopping process..")
+	m.isRunning = false
+
 	for {
 		fmt.Print(".")
 		time.Sleep(1 * time.Second)

@@ -13,10 +13,36 @@
 
 package main
 
+import (
+	"fmt"
+	"os"
+	"os/signal"
+)
+
 func main() {
 	// Create a process
 	proc := MockProcess{}
 
+	ch := make(chan os.Signal)
+	done := make(chan bool)
+	signal.Notify(ch, os.Interrupt)
+
+	go func() {
+		for {
+			select {
+			case <-ch:
+				if proc.isRunning {
+					go proc.Stop()
+				} else {
+					done <- true
+				}
+			}
+		}
+	}()
+
 	// Run the process (blocking)
 	proc.Run()
+
+	<-done
+	fmt.Println("\nForced shutdown...")
 }
